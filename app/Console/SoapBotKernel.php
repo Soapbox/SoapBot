@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\StringInput;
 class SoapBotKernel extends ConsoleKernel
 {
 	private $output;
+	private $artisanConfigured = false;
 
 	/**
 	 * The Artisan commands provided by your application.
@@ -19,7 +20,10 @@ class SoapBotKernel extends ConsoleKernel
 	protected $commands = [
 		'App\Console\Commands\SoapBot\PrInfoCommand',
 		'App\Console\Commands\SoapBot\SlackHelpCommand',
+		'App\Console\Commands\SoapBot\SlackListCommand',
 	];
+
+	protected $includeDefaultCommands = false;
 
 	/**
 	 * Define the application's command schedule.
@@ -50,5 +54,16 @@ class SoapBotKernel extends ConsoleKernel
 	public function output()
 	{
 		return $this->output ? $this->output->fetch() : '';
+	}
+
+	protected function getArtisan()
+	{
+		$artisan = parent::getArtisan();
+		if (!$this->artisanConfigured) {
+			$artisan->setName('SoapBot');
+			//TEMP - Move to environment file
+			$artisan->setVersion('1.0.0-1');
+		}
+		return $artisan;
 	}
 }

@@ -13,6 +13,9 @@ class SbSlackCommandHandler
 	{
 		$args = explode(' ', $command->getText(), 2);
 		$command = $args[0];
+		if (empty(trim($command))) {
+			$command = 'list';
+		}
 		$parameters = '';
 
 		if (count($args) == 2 && !empty($args[1])) {
