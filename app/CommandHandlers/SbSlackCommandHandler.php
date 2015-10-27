@@ -2,28 +2,34 @@
 
 namespace App\CommandHandlers;
 
+use App\Console\SoapBotKernel;
 use App\Entities\Slack\SlashCommandEntity;
 use Illuminate\Support\Str;
+use Laravel\Lumen\Application;
 
 class SbSlackCommandHandler
 {
-	public function processCommand(SlashCommandEntity $command)
+	public function processCommand(SlashCommandEntity $command, Application $app)
 	{
 		$args = explode(' ', $command->getText(), 2);
-		$commandString = $args[0];
-		$text = '';
+		$command = $args[0];
+		$parameters = '';
 
 		if (count($args) == 2 && !empty($args[1])) {
-			$text = $args[1];
+			$parameters = $args[1];
 		}
 
-		$commandClass = sprintf('App\SoapBot\Commands\%sCommand', Str::studly($commandString));
+		$kernel = new SoapBotKernel($app);
+		$kernel->callWithStringArgs($command, $parameters);
+		return $kernel->output();
 
-		if (!class_exists($commandClass)) {
-			return 'Error';
-		}
+		// $commandClass = sprintf('App\SoapBot\Commands\%sCommand', Str::studly($commandString));
 
-		$sbCommand = new $commandClass();
-		return $sbCommand->execute($text);
+		// if (!class_exists($commandClass)) {
+		// 	return 'Error';
+		// }
+
+		// $sbCommand = new $commandClass();
+		// return $sbCommand->execute($text);
 	}
 }

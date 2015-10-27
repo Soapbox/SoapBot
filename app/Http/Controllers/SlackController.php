@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Entities\Slack\SlashCommandEntity;
+use Laravel\Lumen\Application;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class SlackController extends BaseController
 {
-	public function processCommand(Request $request)
+	public function processCommand(Request $request, Application $app)
 	{
 		$command = new SlashCommandEntity($request);
 
@@ -19,6 +20,6 @@ class SlackController extends BaseController
 		}
 
 		$handler = new $commandClass();
-		return $handler->processCommand($command);
+		return $handler->processCommand($command, $app);
 	}
 }
