@@ -25,17 +25,6 @@ class SoapBotKernel extends ConsoleKernel
 
 	protected $includeDefaultCommands = false;
 
-	/**
-	 * Define the application's command schedule.
-	 *
-	 * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-	 * @return void
-	 */
-	protected function schedule(Schedule $schedule)
-	{
-		//
-	}
-
 	public function callWithStringArgs($command, $parameters = '')
 	{
 		$input = new StringInput(sprintf('%s %s', $command, $parameters));
