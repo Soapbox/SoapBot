@@ -39,11 +39,6 @@ class SoapBotKernel extends ConsoleKernel
 	public function callWithStringArgs($command, $parameters = '')
 	{
 		$input = new StringInput(sprintf('%s %s', $command, $parameters));
-		// $input = new \Symfony\Component\Console\Input\StringInput('pr-info 3902 --env slack --help');
-
-		if (preg_match('/^(.*\s)?--help(\s.*)?$/', $parameters)) {
-
-		}
 
 		$command = $this->getArtisan()->find($command);
 		$this->output = new BufferedOutput();
