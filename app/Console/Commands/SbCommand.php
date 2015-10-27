@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use InvalidArgumentException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,13 +24,12 @@ class SbCommand extends SlackCommand
     protected $description = '';
 
     private $commands = [
-
+        'App\Console\Commands\SoapBot\PrInfoCommand'
     ];
 
     public function __construct()
     {
         parent::__construct();
-        $this->loadCommands();
     }
 
     private function loadCommands()
@@ -37,6 +37,8 @@ class SbCommand extends SlackCommand
         $commands = [];
         foreach ($this->commands as $command) {
             $instance = new $command();
+            $instance->setApplication($this->getApplication());
+            $instance->setLaravel($this->getLaravel());
             $commands[$instance->getName()] = $instance;
         }
         $this->commands = $commands;
@@ -70,6 +72,7 @@ class SbCommand extends SlackCommand
      */
     public function fire()
     {
+        dd($this->option('env'));
         $this->loadCommands();
 
         if (is_null($command = $this->argument('command_name'))) {
@@ -78,12 +81,15 @@ class SbCommand extends SlackCommand
 
         if (!array_key_exists($command, $this->commands))
         {
-
+            throw new InvalidArgumentException('No command found');
         }
 
         $instance = $this->commands[$command];
-
         $arguments['command'] = $command;
+$arguments['pr_number'] = $this->argument('args')[0];
+        // foreach ($instance->getDefinition()->getArguments() as $argument) {
+        //     $arguments = array_merge($arguments, $this->argument('args'));
+        // }
 
         return $instance->run(new ArrayInput($arguments), $this->output);
     }
@@ -104,6 +110,7 @@ class SbCommand extends SlackCommand
     {
         return [
             ['command_name', InputArgument::OPTIONAL, 'The command to run'],
+            ['args', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'The command to run'],
         ];
     }
 }
