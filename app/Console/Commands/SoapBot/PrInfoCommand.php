@@ -20,7 +20,7 @@ class PrInfoCommand extends SlackCommand
      *
      * @var string
      */
-    protected $description = '';
+    protected $description = 'Fetch additional information for a pull request';
 
     private function parseSections($body) {
 		$bodyComponents = preg_split('/#+\s+(\[[A-Za-z\s]+\]).*?\n/', $body, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -63,30 +63,29 @@ class PrInfoCommand extends SlackCommand
 
 		$author = json_decode($response->getBody());
 
-		$header = sprintf('PR <%s|#%s> by *%s*', $pr->html_url, $pr->number, $author->name);
+		$this->line(sprintf('PR <%s|#%s> - %s - by *%s*', $pr->html_url, $pr->number, $pr->title, $author->name));
+		$this->line('');
 
-		$message = 'There was additional information specified for this pull request.';
+		$this->line('*What does this PR do?*');;
 
 		$sections = $this->parseSections($pr->body);
 		if (array_key_exists('summary', $sections)) {
-			$message = "*What does this PR do?*\r\n";
-			$message .= $sections['summary'];
+			$this->line($sections['summary']);
+		} else {
+			$this->line('There was no additional information specified for this pull request.');
 		}
 
-		$message .= "\r\n\r\n";
+		$this->line('');
 
-		$message .= "*The following Jira tickets were closed by this PR*\r\n";
+		$this->line('*The following Jira tickets were closed by this PR*');
 		if (array_key_exists('jira', $sections)) {
 			$tickets = preg_split('/[\r\n]+/', $sections['jira'], -1, PREG_SPLIT_NO_EMPTY);
 			foreach ($tickets as $ticket) {
-				$message .= ltrim($ticket, '- ') . "\r\n";
+				$this->line(ltrim($ticket, '- '));
 			}
-			$message = rtrim($message, "\r\n");
 		} else {
-			$message .= 'There are no Jira tickets closed by this PR';
+			$this->line('There are no Jira tickets closed by this PR');
 		}
-
-		$this->line(sprintf("%s\r\n\r\n%s", $header, $message));
     }
 
 	protected function getArguments()
