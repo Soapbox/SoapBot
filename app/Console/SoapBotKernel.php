@@ -61,8 +61,7 @@ class SoapBotKernel extends ConsoleKernel
 		$artisan = parent::getArtisan();
 		if (!$this->artisanConfigured) {
 			$artisan->setName('SoapBot');
-			//TEMP - Move to environment file
-			$artisan->setVersion('1.0.0-1');
+			$artisan->setVersion(SoapBot_Version);
 		}
 		return $artisan;
 	}
