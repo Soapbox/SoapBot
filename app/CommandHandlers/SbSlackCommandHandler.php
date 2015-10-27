@@ -13,13 +13,17 @@ class SbSlackCommandHandler
 	{
 		$args = explode(' ', $command->getText(), 2);
 		$command = $args[0];
-		if (empty(trim($command))) {
-			$command = 'list';
-		}
-		$parameters = '';
 
+		$parameters = '';
 		if (count($args) == 2 && !empty($args[1])) {
 			$parameters = $args[1];
+		}
+
+		if (empty(trim($command))) {
+			$command = 'list';
+		} else if (strpos($command, '-') === 0) {
+			$parameters = sprintf('%s %s', $command, $parameters);
+			$command = 'list';
 		}
 
 		$kernel = new SoapBotKernel($app);

@@ -42,7 +42,7 @@ class SoapBotKernel extends ConsoleKernel
 
 		$command = $this->getArtisan()->find($command);
 		$this->output = new BufferedOutput();
-		$this->output->setDecorated(true);
+		$this->output->setDecorated(false);
 		$this->getArtisan()->run($input, $this->output);
 	}
 
