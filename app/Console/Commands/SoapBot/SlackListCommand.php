@@ -8,11 +8,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SlackListCommand extends ListCommand
 {
-		protected function execute(InputInterface $input, OutputInterface $output)
-		{
-				$output->setDecorated(false);
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $output->setDecorated(false);
         $output->writeln('```');
         parent::execute($input, $output);
         $output->writeln('```');
-		}
+    }
 }
