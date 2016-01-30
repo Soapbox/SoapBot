@@ -14,3 +14,4 @@
 
 $app->post('slack', 'SlackController@processCommand');
 $app->post('jira', 'JiraController@processWebhook');
+$app->post('github', 'GithubController@processWebhook');
