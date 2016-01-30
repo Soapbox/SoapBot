@@ -18,7 +18,7 @@ class GithubController extends BaseController
             return 'Error';
         }
 
-        $handler = new $commandClass();
-        return $handler->handleWebhook($request);
+        $handler = new $webhookHandler();
+        return $handler->handle($request);
     }
 }
