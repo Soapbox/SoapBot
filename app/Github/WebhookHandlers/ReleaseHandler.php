@@ -2,13 +2,17 @@
 
 namespace App\Github\WebhookHandlers;
 
+use App\Jobs\ReleaseJob;
 use Illuminate\Http\Request;
 use App\Console\GithubKernel;
 use Laravel\Lumen\Application;
 use App\Entities\Github\Release;
+use Laravel\Lumen\Routing\DispatchesJobs;
 
 class ReleaseHandler
 {
+    use DispatchesJobs;
+
     public function __construct(Application $application)
     {
         $this->application = $application;
@@ -18,11 +22,11 @@ class ReleaseHandler
     {
         $kernel  = new GithubKernel($this->application);
         $release = new Release($request);
+        $job = new ReleaseJob($release);
 
-        $parameters = $release->getName();
-        $kernel->callWithStringArgs('changelog', $parameters);
+        $this->dispatch($job);
 
-        return $kernel->output();
+        return;
     }
 
     public function handle(Request $request)

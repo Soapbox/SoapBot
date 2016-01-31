@@ -35,10 +35,11 @@ class ChangelogCommand extends SlackCommand
         $current = '4.2.5-build.333';
 
         $command = sprintf('cd /home/vagrant/Development/soapbox/soapbox-v4 && raven generate-changelog %s %s', $released, $current);
+        $command = "cd /home/vagrant/Development/soapbox/soapbox-v4 && /vagrant/bin/build-fe";
 
         $process = new Process($command);
 
-        $process->run();
+        $process->mustRun();
 
         \Log::info($process->getOutput());
     }
