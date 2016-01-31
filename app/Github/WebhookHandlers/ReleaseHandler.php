@@ -3,12 +3,26 @@
 namespace App\Github\WebhookHandlers;
 
 use Illuminate\Http\Request;
-use App\Interfaces\RequestHandler;
+use App\Console\GithubKernel;
+use Laravel\Lumen\Application;
+use App\Entities\Github\Release;
 
-class ReleaseHandler implements RequestHandler {
+class ReleaseHandler
+{
+    public function __construct(Application $application)
+    {
+        $this->application = $application;
+    }
+
     private function handlePublish(Request $request)
     {
-        \Log::info($request);
+        $kernel  = new GithubKernel($this->application);
+        $release = new Release($request);
+
+        $parameters = $release->getName();
+        $kernel->callWithStringArgs('changelog', $parameters);
+
+        return $kernel->output();
     }
 
     public function handle(Request $request)

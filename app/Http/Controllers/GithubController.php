@@ -4,11 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Laravel\Lumen\Application;
 use Illuminate\Support\Facades\Log;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
 class GithubController extends BaseController
 {
+    public function __construct(Application $application)
+    {
+        $this->application = $application;
+    }
+
     private function isSignatureValid(Request $request)
     {
         $secret = env('GITHUB_SECRET', '');
@@ -33,10 +39,10 @@ class GithubController extends BaseController
         $webhookHandler = sprintf('App\Github\WebhookHandlers\%sHandler', $className);
 
         if (!class_exists($webhookHandler)) {
-            return 'Error';
+            return "{$className} not found";
         }
 
-        $handler = new $webhookHandler();
+        $handler = new $webhookHandler($this->application);
         return $handler->handle($request);
     }
 }
